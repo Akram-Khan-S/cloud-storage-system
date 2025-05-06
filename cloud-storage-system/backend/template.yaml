@@ -1,0 +1,40 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Cloud Storage System - Serverless Backend
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: python3.9
+
+Resources:
+  GeneratePresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/generate_presigned_url.lambda_handler
+      CodeUri: .
+      Environment:
+        Variables:
+          BUCKET_NAME: your-s3-bucket-name
+      Events:
+        GetUploadUrl:
+          Type: Api
+          Properties:
+            Path: /upload-url
+            Method: get
+
+  StoreMetadataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda/store_metadata.lambda_handler
+      CodeUri: .
+      Environment:
+        Variables:
+          TABLE_NAME: your-dynamodb-table-name
+      Events:
+        PostMetadata:
+          Type: Api
+          Properties:
+            Path: /metadata
+            Method: post
